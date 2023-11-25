@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local development settings
+instance/
+
+# Environment variables
+.env
+
+# Compiled Python files
+*.pyc
+
+# Database files
+*.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+
+# Static files
+/static/
+
+# Virtual environment
+venv/
