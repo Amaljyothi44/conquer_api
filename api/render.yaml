@@ -1,0 +1,8 @@
+services:
+  - name: web
+    buildCommand: python manage.py collectstatic --noinput
+    startCommand: gunicorn api.wsgi:application -b 0.0.0.0:8000
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: "api.settings"
+    
