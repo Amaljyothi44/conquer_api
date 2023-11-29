@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
-
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,20 +77,30 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'NAME': 'quize',
+#         'CLIENT': {
+#             'host': 'mongodb+srv://amaljyothi44:cvlvJJXBa3qc4Gq8@quize.gyzxavi.mongodb.net/?retryWrites=true&w=majority',  # Replace with your MongoDB server address
+#             'port': 27017,        # Replace with your MongoDB port if different
+#             'username': 'amaljyothi44',  # Replace with your MongoDB username (optional)
+#             'password': 'cvlvJJXBa3qc4Gq8',  # Replace with your MongoDB password (optional)
+#             'authSource': 'admin',  # Replace with your MongoDB authentication database
+#         },
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'quize',
-        'CLIENT': {
-            'host': 'mongodb+srv://amaljyothi44:cvlvJJXBa3qc4Gq8@quize.gyzxavi.mongodb.net/?retryWrites=true&w=majority',  # Replace with your MongoDB server address
-            'port': 27017,        # Replace with your MongoDB port if different
-            'username': 'amaljyothi44',  # Replace with your MongoDB username (optional)
-            'password': 'cvlvJJXBa3qc4Gq8',  # Replace with your MongoDB password (optional)
-            'authSource': 'admin',  # Replace with your MongoDB authentication database
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'quiz_o010',
+        'USER': 'quiz_o010_user',
+        'PASSWORD': 'Bdn86ZX3FCHNuNMG34GJCj7kOi3xj4ha',
+        'HOST': 'dpg-cljjmad8td7s73c346g0-a.oregon-postgres.render.com',  # e.g., 'your-app-name-db.onrender.com'
+        'PORT': '5432',  # e.g., 5432
     }
 }
-
 
 
 # Password validation
