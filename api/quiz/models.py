@@ -6,6 +6,6 @@ class Quiz(models.Model):
     nextRepetition = models.IntegerField()  
     questionNumber = models.IntegerField()  
     subject = models.TextField()
-    link = models.URLField()  
+    link = models.URLField(null=True, blank=True)
     correctOption = models.IntegerField()  
     date = models.DateField() 
