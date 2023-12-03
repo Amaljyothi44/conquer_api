@@ -94,10 +94,10 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'quiz_o010',
-        'USER': 'quiz_o010_user',
-        'PASSWORD': 'Bdn86ZX3FCHNuNMG34GJCj7kOi3xj4ha',
-        'HOST': 'dpg-cljjmad8td7s73c346g0-a.oregon-postgres.render.com',  # e.g., 'your-app-name-db.onrender.com'
+        'NAME': 'quiz_cb34',
+        'USER': 'quiz_cb34_user',
+        'PASSWORD': 'JvKtHJC26HSktDre6v6i30eqHriovgDk',
+        'HOST': 'dpg-clm438pfb9qs7397a9t0-a.oregon-postgres.render.com',  # e.g., 'your-app-name-db.onrender.com'
         'PORT': '5432',  # e.g., 5432
     }
 }
