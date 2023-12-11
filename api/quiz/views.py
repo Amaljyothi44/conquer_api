@@ -76,7 +76,8 @@ def get_next_question(request):
                 'question': question_data.question,
                 'options' : question_data.options,
                 'correctOption' : question_data.correctOption,
-                'link' : question_data.link
+                'link' : question_data.link,
+                'id': question_data.id
             }
             return JsonResponse(serialized_question)
         
