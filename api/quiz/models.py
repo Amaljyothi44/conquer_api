@@ -9,3 +9,7 @@ class Quiz(models.Model):
     link = models.URLField(null=True, blank=True)
     correctOption = models.IntegerField()  
     date = models.DateField() 
+
+class Count(models.Model):
+    dcount = models.IntegerField(default=0)
+    dateAnswer = models.DateField() 

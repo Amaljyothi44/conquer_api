@@ -150,6 +150,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React development server
-    # Add other allowed origins as needed
+    "http://localhost:3000", 
+     "https://conquer-quiz.vercel.app/" 
 ]

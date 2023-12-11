@@ -1,9 +1,12 @@
 from rest_framework import generics
-from .models import Quiz
-from .serializers import QuizSerializer
+from .models import Quiz, Count
+from .serializers import QuizSerializer,CountSerializer
 from rest_framework.response import Response
 from django.http import JsonResponse
 from datetime import datetime, timedelta
+from django.views.decorators.csrf import csrf_exempt
+import json, traceback
+
 
 class QuizListCreateView(generics.ListCreateAPIView):
     queryset = Quiz.objects.all()
@@ -80,5 +83,52 @@ def get_next_question(request):
                 'id': question_data.id
             }
             return JsonResponse(serialized_question)
+        
+REPETITION_INTERVALS = [0, 3, 5, 7, 10, 12]
+def get_repetition_delay(last_repetition):
+    print("working repeter delay")
+    if last_repetition == REPETITION_INTERVALS[-1]:
+        return REPETITION_INTERVALS[-1]
+    else:
+        increment = REPETITION_INTERVALS.index(last_repetition)
+        return REPETITION_INTERVALS[increment + 1]
+           
+@csrf_exempt    
+def update_repetition(request, quiz_id):
+    try:
+        if request.method == 'POST':
+            
+            quiz = Quiz.objects.get(id=quiz_id)
+            body_unicode = request.body.decode('utf-8')
+            body_data = json.loads(body_unicode)
+            result = body_data.get('result', None)
+
+            if result == True:
+                repetition_delay = get_repetition_delay(quiz.nextRepetition)
+                next_repetition_date = datetime.now() + timedelta(days=repetition_delay)
+                quiz.nextRepetition = repetition_delay 
+                quiz.date = next_repetition_date.strftime('%Y-%m-%d')
+                quiz.save()
+            else:
+                next_repetition_date = datetime.now() + timedelta(days=3)
+                quiz.nextRepetition = 3
+                quiz.date = next_repetition_date.strftime('%Y-%m-%d')
+                quiz.save()
+        
+        return JsonResponse({'message': 'Success'})  # Replace with your actual response
+        
+
+    except Quiz.DoesNotExist:
+        return JsonResponse({'message': 'Quiz not found'}, status=404)
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': str(e)}, status=500)
+        
+class dbcount(generics.ListCreateAPIView):
+    queryset = Count.objects.all()
+    serializer_class = CountSerializer
+
+
+
         
 
