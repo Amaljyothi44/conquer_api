@@ -8,4 +8,4 @@ pytz==2023.3.post1
 sqlparse
 tzdata
 psycopg2 
-corsheaders  
+django-cors-headers
