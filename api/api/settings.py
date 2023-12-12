@@ -97,14 +97,13 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'quiz_cb34',
-        'USER': 'quiz_cb34_user',
-        'PASSWORD': 'JvKtHJC26HSktDre6v6i30eqHriovgDk',
-        'HOST': 'dpg-clm438pfb9qs7397a9t0-a.oregon-postgres.render.com',  # e.g., 'your-app-name-db.onrender.com'
+        'NAME': 'quiz_pgsg',
+        'USER': 'quiz_pgsg_user',
+        'PASSWORD': 'QUua9rCVSm7oheIcy5z3NN3NHDoefslq',
+        'HOST': 'dpg-cls18rsm7d1c73f6dfcg-a.oregon-postgres.render.com',  # e.g., 'your-app-name-db.onrender.com'
         'PORT': '5432',  # e.g., 5432
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -151,5 +150,5 @@ APPEND_SLASH = False
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", 
-     "https://conquer-quiz.vercel.app/" 
+     "https://conquer-quiz.vercel.app" 
 ]

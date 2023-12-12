@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Quiz,Count
+from .models import Quiz,Countdb
 
 class QuizSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,5 +9,5 @@ class QuizSerializer(serializers.ModelSerializer):
 
 class CountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Count
+        model = Countdb
         fields = '__all__'

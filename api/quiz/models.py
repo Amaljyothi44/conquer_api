@@ -10,6 +10,9 @@ class Quiz(models.Model):
     correctOption = models.IntegerField()  
     date = models.DateField() 
 
-class Count(models.Model):
-    dcount = models.IntegerField(default=0)
-    dateAnswer = models.DateField() 
+class Countdb(models.Model):
+    mark =  models.IntegerField(default=0)
+    count = models.IntegerField(default=0)
+    dateAnswer = models.DateField(unique=True) 
+    def __str__(self):
+        return f'{self.dateAnswer} -mark:{self.mark} - Count: {self.dcount}'

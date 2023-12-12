@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import Quiz, Count
+from .models import Quiz, Countdb
 from .serializers import QuizSerializer,CountSerializer
 from rest_framework.response import Response
 from django.http import JsonResponse
@@ -97,12 +97,10 @@ def get_repetition_delay(last_repetition):
 def update_repetition(request, quiz_id):
     try:
         if request.method == 'POST':
-            
             quiz = Quiz.objects.get(id=quiz_id)
             body_unicode = request.body.decode('utf-8')
             body_data = json.loads(body_unicode)
             result = body_data.get('result', None)
-
             if result == True:
                 repetition_delay = get_repetition_delay(quiz.nextRepetition)
                 next_repetition_date = datetime.now() + timedelta(days=repetition_delay)
@@ -116,8 +114,6 @@ def update_repetition(request, quiz_id):
                 quiz.save()
         
         return JsonResponse({'message': 'Success'})  # Replace with your actual response
-        
-
     except Quiz.DoesNotExist:
         return JsonResponse({'message': 'Quiz not found'}, status=404)
     except Exception as e:
@@ -125,7 +121,7 @@ def update_repetition(request, quiz_id):
         return JsonResponse({'message': str(e)}, status=500)
         
 class dbcount(generics.ListCreateAPIView):
-    queryset = Count.objects.all()
+    queryset = Countdb.objects.all()
     serializer_class = CountSerializer
 
 
