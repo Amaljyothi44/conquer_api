@@ -151,24 +151,20 @@ def count_and_mark(request):
             return JsonResponse(response_data)
 
         elif request.method == 'POST':
-            # Retrieve the Count object for the given date or create a new one
-            # count_object, created = Countdb.objects.get_or_create(dateAnswer=date_answer)
-
-            # Decode the JSON data from the request body
+            
             body_unicode = request.body.decode('utf-8')
             body_data = json.loads(body_unicode)
             result = body_data.get('result', None)
 
-            # Update count and mark based on the result
-            # if result:
-            #     count_object.dcount += 1
-            #     count_object.mark += 1  # Increment mark for a correct answer
-            # else:
-            #     count_object.dcount += 1
+            if result == True:
+                count_object.dcount += 1
+                count_object.mark += 1 
+            else:
+                count_object.dcount += 1
 
             count_object.save()
 
-            return JsonResponse({'message': 'Success'})
+            return JsonResponse({'message': 'count Success'})
 
     except Exception as e:
         traceback.print_exc()
