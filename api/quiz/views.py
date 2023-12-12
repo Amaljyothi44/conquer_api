@@ -133,7 +133,9 @@ class dbcountupdate(generics.RetrieveUpdateDestroyAPIView):
         self.perform_update(serializer)
 
         return Response(serializer.data)
-
+    
+    
+@csrf_exempt    
 def count_and_mark(request):
     try:
 
@@ -158,7 +160,7 @@ def count_and_mark(request):
 
             if result is not None:
                 count_object.count += 1
-                
+
                 if result:
                     count_object.mark += 1
 
@@ -169,6 +171,7 @@ def count_and_mark(request):
                 return JsonResponse({'message': 'Result is required'}, status=400)
 
     except Exception as e:
+        traceback.print_exc()
         return JsonResponse({'message': str(e)}, status=500)
 
 
