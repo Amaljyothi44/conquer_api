@@ -151,23 +151,24 @@ def count_and_mark(request):
             return JsonResponse(response_data)
 
         elif request.method == 'POST':
-            
+            count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
             body_unicode = request.body.decode('utf-8')
             body_data = json.loads(body_unicode)
             result = body_data.get('result', None)
 
-            if result == True:
-                count_object.dcount += 1
-                count_object.mark += 1 
+            if result is not None:
+                count_object.count += 1
+                
+                if result:
+                    count_object.mark += 1
+
+                count_object.save()
+
+                return JsonResponse({'message': 'count Success'})
             else:
-                count_object.dcount += 1
-
-            count_object.save()
-
-            return JsonResponse({'message': 'count Success'})
+                return JsonResponse({'message': 'Result is required'}, status=400)
 
     except Exception as e:
-        traceback.print_exc()
         return JsonResponse({'message': str(e)}, status=500)
 
 
