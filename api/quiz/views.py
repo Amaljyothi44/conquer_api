@@ -122,7 +122,57 @@ def update_repetition(request, quiz_id):
 class dbcount(generics.ListCreateAPIView):
     queryset = Countdb.objects.all()
     serializer_class = CountSerializer
+class dbcountupdate(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Countdb.objects.all()
+    serializer_class = CountSerializer
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
 
+        return Response(serializer.data)
+
+def count_and_mark(request):
+    try:
+
+        if request.method == 'GET':
+            # Retrieve the Count object for the given date
+            count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
+            
+            # Prepare the response
+            response_data = {
+                'dateAnswer': count_object.dateAnswer.strftime('%Y-%m-%d'),
+                'count': count_object.count,
+                'mark': count_object.mark,
+            }
+
+            return JsonResponse(response_data)
+
+        elif request.method == 'POST':
+            # Retrieve the Count object for the given date or create a new one
+            # count_object, created = Countdb.objects.get_or_create(dateAnswer=date_answer)
+
+            # Decode the JSON data from the request body
+            body_unicode = request.body.decode('utf-8')
+            body_data = json.loads(body_unicode)
+            result = body_data.get('result', None)
+
+            # Update count and mark based on the result
+            # if result:
+            #     count_object.dcount += 1
+            #     count_object.mark += 1  # Increment mark for a correct answer
+            # else:
+            #     count_object.dcount += 1
+
+            count_object.save()
+
+            return JsonResponse({'message': 'Success'})
+
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': str(e)}, status=500)
 
 
         

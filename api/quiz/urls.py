@@ -1,6 +1,6 @@
 # urls.py
 from django.urls import path
-from .views import QuizListCreateView, QuizRetrieveUpdateDestroyView, get_next_question,update_repetition,dbcount
+from .views import QuizListCreateView, QuizRetrieveUpdateDestroyView, get_next_question,update_repetition,dbcount,count_and_mark,dbcountupdate
 
 urlpatterns = [
     path('quiz/', QuizListCreateView.as_view(), name='quiz-list-create'),
@@ -8,4 +8,6 @@ urlpatterns = [
     path('get-next-question/', get_next_question, name='get_next_question'),
     path('update-repetition/<int:quiz_id>/',update_repetition, name ='update_repetition'),
     path('count/',dbcount.as_view(), name ='dbcount'),
+     path('count/<int:pk>/',dbcountupdate.as_view(), name ='dbcountupdate'),
+    path('count-mark/',count_and_mark,name='count_and_mark')
 ]
