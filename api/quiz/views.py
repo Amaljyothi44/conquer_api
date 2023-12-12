@@ -37,7 +37,7 @@ def get_next_eligible_question(eligible_questions_dict):
             return x
     return None
 
-def get_next_question(questions_dict):
+def get_next_question_no(questions_dict):
     for quiz_number in questions_dict:
         question_data = questions_dict[quiz_number]
         if is_question_due(question_data):
@@ -47,7 +47,6 @@ def get_next_question(questions_dict):
 def get_next_question(request):
     if request.method == 'GET':
         all_questions = Quiz.objects.all()
-
         # Use Django's filter to get eligible and sorted questions
         filtered_quiz_data = all_questions.filter(nextRepetition__lt=1)
         sorted_quiz_data = filtered_quiz_data.order_by('date', 'questionNumber')
@@ -65,9 +64,9 @@ def get_next_question(request):
         if len(eligible_questions) > 0:
             next_quiz_number = get_next_eligible_question(eligible_questions_dict)
             if next_quiz_number is None:
-                next_quiz_number = get_next_question(questions_dict)
+                next_quiz_number = get_next_question_no(questions_dict)
         else:
-            next_quiz_number = get_next_question(questions_dict)
+            next_quiz_number = get_next_question_no(questions_dict)
 
         if next_quiz_number is None:
             return JsonResponse({'message': 'No eligible questions found'})
