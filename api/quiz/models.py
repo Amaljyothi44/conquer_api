@@ -16,3 +16,17 @@ class Countdb(models.Model):
     dateAnswer = models.DateField(unique=True) 
     def __str__(self):
         return f'{self.dateAnswer} -mark:{self.mark} - Count: {self.dcount}'
+
+class News(models.Model):
+    title = models.TextField()
+    body = models.JSONField()  
+    date = models.DateTimeField()
+
+class Remind(models.Model):
+    body = models.TextField()
+    answer = models.TextField()
+    nextRepetition = models.IntegerField()  
+    questionNumber = models.IntegerField()  
+    date = models.DateTimeField() 
+
+    
