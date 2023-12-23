@@ -9,3 +9,4 @@ sqlparse
 tzdata
 psycopg2 
 django-cors-headers
+requests
