@@ -68,8 +68,9 @@ class RemindRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 def is_question_due(question):
+    
     next_repetition_date = datetime.strptime(
-        str(question.date), '%Y-%m-%d') + timedelta(days=question.nextRepetition)
+        str(question.date), '%Y-%m-%d') 
     return datetime.now() >= next_repetition_date
 
 
@@ -77,6 +78,7 @@ def get_next_eligible_question(eligible_questions_dict):
     for x in eligible_questions_dict:
         question_data = eligible_questions_dict[x]
         if is_question_due(question_data):
+            print(x)
             return x
     return None
 
@@ -94,21 +96,22 @@ def get_next_question(request):
         all_questions = Quiz.objects.all()
         # Use Django's filter to get eligible and sorted questions
         filtered_quiz_data = all_questions.filter(nextRepetition__lt=1)
+      
         sorted_quiz_data = filtered_quiz_data.order_by(
             'date', 'questionNumber')
-
+       
         questions_dict = {
             item.questionNumber: item for item in sorted_quiz_data}
-
+        
         # Use Django's filter to get eligible and sorted questions
         eligible_questions = all_questions.filter(
             nextRepetition__gt=0,
             date__lte=datetime.now().date()
         ).order_by('date', 'questionNumber')
-    
+        
         eligible_questions_dict = {
             item.questionNumber: item for item in eligible_questions}
-
+       
         if len(eligible_questions) > 0:
             next_quiz_number = get_next_eligible_question(
                 eligible_questions_dict)
