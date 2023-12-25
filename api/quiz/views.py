@@ -78,7 +78,6 @@ def get_next_eligible_question(eligible_questions_dict):
     for x in eligible_questions_dict:
         question_data = eligible_questions_dict[x]
         if is_question_due(question_data):
-            print(x)
             return x
     return None
 
@@ -111,7 +110,7 @@ def get_next_question(request):
         
         eligible_questions_dict = {
             item.questionNumber: item for item in eligible_questions}
-       
+        eli_leng = len(eligible_questions)
         if len(eligible_questions) > 0:
             next_quiz_number = get_next_eligible_question(
                 eligible_questions_dict)
@@ -132,7 +131,8 @@ def get_next_question(request):
                 'options': question_data.options,
                 'correctOption': question_data.correctOption,
                 'link': question_data.link,
-                'id': question_data.id
+                'id': question_data.id,
+                'eli_len' : eli_leng,
             }
             return JsonResponse(serialized_question)
 
@@ -397,3 +397,8 @@ def update_remainder_repetition(request, quiz_id):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({'message': str(e)}, status=500)
+    
+def news_update(request):
+    if request.method == 'GET':
+        news = News.objects.all()
+        sort_news = news.order_by('id')
