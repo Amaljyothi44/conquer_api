@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "mark": 0,
+    "count": 0,
+    "dateAnswer": "2023-12-11"
+  },
+  {
+    "id": 9,
+    "mark": 4,
+    "count": 11,
+    "dateAnswer": "2023-12-21"
+  },
+  {
+    "id": 7,
+    "mark": 10,
+    "count": 17,
+    "dateAnswer": "2023-12-19"
+  },
+  {
+    "id": 14,
+    "mark": 4,
+    "count": 30,
+    "dateAnswer": "2023-12-26"
+  },
+  {
+    "id": 2,
+    "mark": 1,
+    "count": 4,
+    "dateAnswer": "2023-12-12"
+  },
+  {
+    "id": 3,
+    "mark": 1,
+    "count": 11,
+    "dateAnswer": "2023-12-13"
+  },
+  {
+    "id": 12,
+    "mark": 37,
+    "count": 99,
+    "dateAnswer": "2023-12-24"
+  },
+  {
+    "id": 4,
+    "mark": 2,
+    "count": 13,
+    "dateAnswer": "2023-12-14"
+  },
+  {
+    "id": 5,
+    "mark": 0,
+    "count": 0,
+    "dateAnswer": "2023-12-15"
+  },
+  {
+    "id": 6,
+    "mark": 1,
+    "count": 4,
+    "dateAnswer": "2023-12-16"
+  },
+  {
+    "id": 13,
+    "mark": 32,
+    "count": 54,
+    "dateAnswer": "2023-12-25"
+  },
+  {
+    "id": 10,
+    "mark": 9,
+    "count": 35,
+    "dateAnswer": "2023-12-22"
+  },
+  {
+    "id": 11,
+    "mark": 1,
+    "count": 1,
+    "dateAnswer": "2023-12-23"
+  },
+  {
+    "id": 8,
+    "mark": 11,
+    "count": 89,
+    "dateAnswer": "2023-12-20"
+  }
+]

@@ -222,6 +222,9 @@ def count_and_mark(request):
                 'dateAnswer': count_object.dateAnswer.strftime('%Y-%m-%d'),
                 'count': count_object.count,
                 'mark': count_object.mark,
+                'remcount' : count_object.remcount,
+                'newscount': count_object.newscount,
+                'totalnews': count_object.totalnews,
             }
            
             return JsonResponse(response_data)
