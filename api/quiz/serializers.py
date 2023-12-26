@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Quiz,Countdb,News, Remind
+from .models import Quiz,Countdb,News, Reminder
 
 class QuizSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +17,7 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = '__all__'
 
-class RemindSerializer(serializers.ModelField):
+class RemindSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Remind
+        model = Reminder
         field = '__all__'

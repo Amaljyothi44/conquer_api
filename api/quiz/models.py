@@ -13,20 +13,24 @@ class Quiz(models.Model):
 class Countdb(models.Model):
     mark =  models.IntegerField(default=0)
     count = models.IntegerField(default=0)
+    remcount = models.IntegerField(default=0)
+    newscount = models.IntegerField(default=0)
+    totalnews = models.IntegerField(default=0)
     dateAnswer = models.DateField(unique=True) 
+
     def __str__(self):
-        return f'{self.dateAnswer} -mark:{self.mark} - Count: {self.dcount}'
+        return f'{self.dateAnswer} -mark:{self.mark}'
 
 class News(models.Model):
     title = models.TextField()
     body = models.JSONField()  
-    date = models.DateTimeField()
+    date = models.TextField()
 
-class Remind(models.Model):
+class Reminder(models.Model):
     body = models.TextField()
     answer = models.TextField()
     nextRepetition = models.IntegerField()  
     questionNumber = models.IntegerField()  
     date = models.DateTimeField() 
-
+    subject = models.TextField()
     

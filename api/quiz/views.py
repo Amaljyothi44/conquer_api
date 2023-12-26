@@ -1,11 +1,11 @@
 from rest_framework import generics
-from .models import Quiz, Countdb, News, Remind
+from .models import Quiz, Countdb, News, Reminder
 from .serializers import QuizSerializer, CountSerializer,NewsSerializer, RemindSerializer
 from rest_framework.response import Response
 from django.http import JsonResponse,HttpResponse
 from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
-import json, time
+import json, time, os, zipfile
 import traceback
 from django.core.serializers import serialize
 import requests
@@ -49,11 +49,11 @@ class NewsRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data)
 
 class RemindList(generics.ListAPIView):
-    queryset = Remind.objects.all()
+    queryset = Reminder.objects.all()
     serializer_class = RemindSerializer
 
 class RemindRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Remind.objects.all()
+    queryset = Reminder.objects.all()
     serializer_class = RemindSerializer
 
     def update(self, request, *args, **kwargs):
@@ -93,6 +93,7 @@ def get_next_question_no(questions_dict):
 def get_next_question(request):
     if request.method == 'GET':
         all_questions = Quiz.objects.all()
+    
         # Use Django's filter to get eligible and sorted questions
         filtered_quiz_data = all_questions.filter(nextRepetition__lt=1)
       
@@ -252,7 +253,7 @@ def count_and_mark(request):
 def download_json(request):
     
     all_questions = Quiz.objects.all()
-
+    all_count = Countdb.objects.all()
     serialized_questions = [
             {
                 "id": quiz.id,
@@ -267,29 +268,47 @@ def download_json(request):
             }
             for quiz in all_questions
         ]
+    serialized_count = [
+            {
+                "id": counter.id,
+                "mark": counter.mark,
+                "count": counter.count,
+                "dateAnswer": counter.dateAnswer.strftime("%Y-%m-%d")
+            }
+            for counter in all_count
+        ]
     with open('upload.json', 'w', encoding='utf-8') as json_file:
         json.dump(serialized_questions, json_file,ensure_ascii=False, indent=2)
+    
+    with open('counter.json', 'w', encoding='utf-8') as json_file:
+        json.dump(serialized_count, json_file,ensure_ascii=False, indent=2)
         
-    file_path = 'upload.json'
+     # Create a zip file containing both JSON files
+    zip_file_path = 'download_files.zip'
+    with zipfile.ZipFile(zip_file_path, 'w') as zipf:
+        zipf.write('upload.json', 'upload.json')
+        zipf.write('counter.json', 'counter.json')
 
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            # Load the JSON content
-            json_content = json.load(file)
-
-        # Convert the JSON content to a pretty printed string
-        json_string = json.dumps(json_content, indent=4)
-
-        # Create an HTTP response with the content type for JSON and attachment for download
-        response = HttpResponse(json_string, content_type='application/json')
-        response['Content-Disposition'] = 'attachment; filename="upload.json"'
-        return response
+        # Open the zip file for reading
+        with open(zip_file_path, 'rb') as zip_file:
+            # Create an HTTP response with the content type for zip files and attachment for download
+            response = HttpResponse(zip_file.read(), content_type='application/zip')
+            response['Content-Disposition'] = 'attachment; filename="download_files.zip"'
+            return response
 
     except FileNotFoundError:
         return JsonResponse({'error': 'File not found'}, status=404)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+    finally:
+        # Clean up: remove temporary JSON files and the zip file
+        os.remove('upload.json')
+        os.remove('counter.json')
+        os.remove(zip_file_path)
+
     
 def scrape_article_content(request):
     url = scrape_the_hindu_news()
@@ -306,18 +325,22 @@ def scrape_article_content(request):
                     unwanted_section.decompose()
                 article_body = "\n\n".join([p.get_text() for p in article_content.find_all('p')])
                 
-                news, created = News.objects.get_or_create(title=article_head, defaults={'body': article_body, 'date': datetime.now()})
-
-                if not created:
-                    news.body = article_body
-                    current_datetime = datetime.now()
-                    news.date = current_datetime.strftime("%Y-%m-%d %H:%M")
-                    news.save()
-
-            # Move the sleep outside of the if block to make sure it's executed in every iteration
+                existing_news = News.objects.filter(title=article_head).first()
+                if not existing_news:
+                    news, created = News.objects.get_or_create(title=article_head, defaults={'body': article_body, 'date': news_time})
+                    count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
+                    count_object.totalnews += 1
+                    count_object.save()
+                    if not created:
+                        news.body = article_body
+                        news.date = news_time
+                        news.save()
+                        if len(News.objects.all()) > 150 :
+                            news_del = News.objects.first()
+                            news_del.delete()
+   
             time.sleep(1)
         else:
-            # Add some logging or handling for unsuccessful requests
             print(f"Failed to retrieve data. Status code: {response.status_code}")
     
 
@@ -334,7 +357,8 @@ def scrape_the_hindu_news():
 @csrf_exempt
 def get_next_remainder_question(request):
     if request.method == 'GET':
-        all_questions = Remind.objects.all()
+        all_questions = Reminder.objects.all()
+        
         # Use Django's filter to get eligible and sorted questions
         filtered_quiz_data = all_questions.filter(nextRepetition__lt=1)
         sorted_quiz_data = filtered_quiz_data.order_by(
@@ -351,7 +375,8 @@ def get_next_remainder_question(request):
     
         eligible_questions_dict = {
             item.questionNumber: item for item in eligible_questions}
-
+        
+        eli_leng = len(eligible_questions)
         if len(eligible_questions) > 0:
             next_quiz_number = get_next_eligible_question(
                 eligible_questions_dict)
@@ -372,7 +397,8 @@ def get_next_remainder_question(request):
                 'questionNumber': question_data.questionNumber,
                 'body': question_data.body,
                 'answer': question_data.answer,
-                'id': question_data.id
+                'id': question_data.id,
+                'eli_len' : eli_leng,
             }
             return JsonResponse(serialized_question)
         
@@ -380,7 +406,7 @@ def get_next_remainder_question(request):
 def update_remainder_repetition(request, quiz_id):
     try:
         if request.method == 'POST':
-            remind = Remind.objects.get(id=quiz_id)
+            remind = Reminder.objects.get(id=quiz_id)
             result = True
             if result :
                 repetition_delay = get_repetition_delay_rem(remind.nextRepetition)
