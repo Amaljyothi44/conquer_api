@@ -438,15 +438,25 @@ def next_news(request):
     if request.method == 'GET':
         # Retrieve the Count object for the given date
         news = News.objects.first()
-        # Prepare the response
-        response_data = {
-           'id': news.id,
-           'title': news.title,
-           'body' : news.body, 
-           'date' : news.date,
-        }
+        if news is None:
+            serialized_question = {
+                'body': "Question Finished",
+            }
+            return JsonResponse(serialized_question)
+        else :
+            response_data = {
+                'id': news.id,
+                'title': news.title,
+                'body' : news.body, 
+                 'date' : news.date,
+           }
         return JsonResponse(response_data)
     
     elif request.method == 'POST':
+        count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
+        count_object.newscount += 1
+        count_object.save()
         news_del = News.objects.first()
         news_del.delete()
+        
+        return JsonResponse({'message': 'Success'})
