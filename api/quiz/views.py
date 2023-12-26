@@ -342,6 +342,9 @@ def scrape_article_content(request):
                         if len(News.objects.all()) > 150 :
                             news_del = News.objects.first()
                             news_del.delete()
+                    return JsonResponse({'message': 'success'})   
+                else :
+                    return JsonResponse({'message': 'checking'})
    
             time.sleep(1)
         else:
