@@ -358,7 +358,7 @@ def scrape_the_hindu_news():
     return None
 
 @csrf_exempt
-def get_next_remainder_question(request):
+def get_next_reminder_question(request):
     if request.method == 'GET':
         all_questions = Reminder.objects.all()
         
