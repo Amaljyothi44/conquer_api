@@ -31,6 +31,6 @@ class Reminder(models.Model):
     answer = models.TextField()
     nextRepetition = models.IntegerField()  
     questionNumber = models.IntegerField()  
-    date = models.DateTimeField() 
+    date = models.DateField(null=True, blank=True) 
     subject = models.TextField()
     

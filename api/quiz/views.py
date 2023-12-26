@@ -48,7 +48,7 @@ class NewsRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(serializer.data)
 
-class RemindList(generics.ListAPIView):
+class RemindList(generics.ListCreateAPIView):
     queryset = Reminder.objects.all()
     serializer_class = RemindSerializer
 
@@ -431,3 +431,22 @@ def news_update(request):
     if request.method == 'GET':
         news = News.objects.all()
         sort_news = news.order_by('id')
+
+
+@csrf_exempt
+def next_news(request):
+    if request.method == 'GET':
+        # Retrieve the Count object for the given date
+        news = News.objects.first()
+        # Prepare the response
+        response_data = {
+           'id': news.id,
+           'title': news.title,
+           'body' : news.body, 
+           'date' : news.date,
+        }
+        return JsonResponse(response_data)
+    
+    elif request.method == 'POST':
+        news_del = News.objects.first()
+        news_del.delete()
