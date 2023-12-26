@@ -20,4 +20,4 @@ class NewsSerializer(serializers.ModelSerializer):
 class RemindSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reminder
-        field = '__all__'
+        fields = '__all__'

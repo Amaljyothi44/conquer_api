@@ -16,7 +16,7 @@ urlpatterns = [
     path('news/',NewsList.as_view() , name='news'),
     path('news/<int:pk>/',NewsRetrieveUpdateDestroyView.as_view() , name='news-del-up'),
     path('remind/',RemindList.as_view() , name='remind'),
-    path('remind/<int:pk>/',NewsRetrieveUpdateDestroyView.as_view() , name='news-del-up'),
+    path('remind/<int:pk>/',RemindRetrieveUpdateDestroyView.as_view() , name='news-del-up'),
     path('check/',scrape_article_content,name='scrape_article_content'),
 
 ]
