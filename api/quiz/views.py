@@ -329,6 +329,7 @@ def scrape_article_content(request):
                 article_body = "\n\n".join([p.get_text() for p in article_content.find_all('p')])
                 
                 existing_news = News.objects.filter(title=article_head).first()
+                print('checking..')
                 if not existing_news:
                     news, created = News.objects.get_or_create(title=article_head, defaults={'body': article_body, 'date': news_time})
                     count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
