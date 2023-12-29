@@ -10,6 +10,7 @@ import traceback
 from django.core.serializers import serialize
 import requests
 from bs4 import BeautifulSoup
+# from rest_framework.decorators import action
 
 class QuizListCreateView(generics.ListCreateAPIView):
     queryset = Quiz.objects.all()
@@ -33,6 +34,7 @@ class QuizRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class NewsList(generics.ListCreateAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+
 
 class NewsRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = News.objects.all()
@@ -342,13 +344,10 @@ def scrape_article_content(request):
                         if len(News.objects.all()) > 150 :
                             news_del = News.objects.first()
                             news_del.delete()
-                    return JsonResponse({'message': 'success'})   
-                else :
-                    return JsonResponse({'message': 'checking'})
+                    
    
-            time.sleep(1)
-        else:
-            print(f"Failed to retrieve data. Status code: {response.status_code}")
+        time.sleep(1)
+        
     
 
 def scrape_the_hindu_news():
@@ -452,7 +451,7 @@ def next_news(request):
                 'id': news.id,
                 'title': news.title,
                 'body' : news.body, 
-                 'date' : news.date,
+                'date' : news.date,
            }
         return JsonResponse(response_data)
     
