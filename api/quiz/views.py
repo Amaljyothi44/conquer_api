@@ -10,7 +10,8 @@ import traceback
 from django.core.serializers import serialize
 import requests
 from bs4 import BeautifulSoup
-# from rest_framework.decorators import action
+from django.shortcuts import render
+
 
 class QuizListCreateView(generics.ListCreateAPIView):
     queryset = Quiz.objects.all()
@@ -331,7 +332,6 @@ def scrape_article_content(request):
                 article_body = "\n\n".join([p.get_text() for p in article_content.find_all('p')])
                 
                 existing_news = News.objects.filter(title=article_head).first()
-                print('checking..')
                 if not existing_news:
                     news, created = News.objects.get_or_create(title=article_head, defaults={'body': article_body, 'date': news_time})
                     count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
@@ -463,3 +463,8 @@ def next_news(request):
         news_del.delete()
         
         return JsonResponse({'message': 'Success'})
+    
+def conqure(request):
+    
+    scrape_article_content(request)
+    return render(request, 'main.html')

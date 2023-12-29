@@ -1,7 +1,7 @@
 # urls.py
 from django.urls import path
 from .views import QuizListCreateView, QuizRetrieveUpdateDestroyView, get_next_question,update_repetition,dbcount,count_and_mark,dbcountupdate,download_json,NewsList,NewsRetrieveUpdateDestroyView,RemindRetrieveUpdateDestroyView,RemindList,scrape_article_content,get_next_reminder_question
-from .views import next_news
+from .views import next_news,conqure
 
 
 urlpatterns = [
@@ -20,5 +20,5 @@ urlpatterns = [
     path('remind/',RemindList.as_view() , name='remind'),
     path('remind/<int:pk>/',RemindRetrieveUpdateDestroyView.as_view() , name='news-del-up'),
     path('check/',scrape_article_content,name='scrape_article_content'),
-    
+    path('conqure/',conqure,name='conqure'),
 ]
