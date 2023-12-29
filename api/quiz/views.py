@@ -35,7 +35,25 @@ class QuizRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class NewsList(generics.ListCreateAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+    def create(self, request, *args, **kwargs):
+        # Get the title from the request data
+        new_title = request.data.get('title', None)
 
+        # Check if a record with the same title already exists
+        existing_news = News.objects.filter(title=new_title).first()
+
+        if existing_news:
+            # Return a response indicating that the record already exists
+            return Response({'message': 'Record with this title already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if len(News.objects.all()) > 150 :
+                news_del = News.objects.first()
+                news_del.delete()
+            count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
+            count_object.totalnews += 1
+            count_object.save()
+            # Continue with the normal creation process
+            return super().create(request, *args, **kwargs)
 
 class NewsRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = News.objects.all()
