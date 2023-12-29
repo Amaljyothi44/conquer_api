@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from .models import Quiz, Countdb, News, Reminder
 from .serializers import QuizSerializer, CountSerializer,NewsSerializer, RemindSerializer
 from rest_framework.response import Response
@@ -32,13 +32,14 @@ class QuizRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(serializer.data)
     
-@csrf_exempt
+
 class NewsList(generics.ListCreateAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
-    def create(self, request, *args, **kwargs):
+
+    def update(self, request, *args, **kwargs):
         # Get the title from the request data
-        new_title = request.data.get('title', None)
+        new_title = request.data.get('title')
 
         # Check if a record with the same title already exists
         existing_news = News.objects.filter(title=new_title).first()
