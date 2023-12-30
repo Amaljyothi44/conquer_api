@@ -37,10 +37,10 @@ class NewsList(generics.ListCreateAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
-    def update(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         # Get the title from the request data
         new_title = request.data.get('title')
-
+   
         # Check if a record with the same title already exists
         existing_news = News.objects.filter(title=new_title).first()
 
@@ -461,6 +461,7 @@ def next_news(request):
     if request.method == 'GET':
         # Retrieve the Count object for the given date
         news = News.objects.first()
+        news_len = len(News.objects.all())
         if news is None:
             serialized_question = {
                 'body': "Question Finished",
@@ -472,6 +473,7 @@ def next_news(request):
                 'title': news.title,
                 'body' : news.body, 
                 'date' : news.date,
+                'news_len' : news_len
            }
         return JsonResponse(response_data)
     
@@ -485,6 +487,4 @@ def next_news(request):
         return JsonResponse({'message': 'Success'})
     
 def conqure(request):
-    
-    scrape_article_content(request)
     return render(request, 'main.html')
