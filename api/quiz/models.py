@@ -29,8 +29,8 @@ class News(models.Model):
 class Reminder(models.Model):
     body = models.TextField()
     answer = models.TextField()
-    nextRepetition = models.IntegerField()  
+    nextRepetition = models.IntegerField(default=0)  
     questionNumber = models.IntegerField()  
-    date = models.DateField(null=True, blank=True) 
+    date = models.DateField() 
     subject = models.TextField()
     

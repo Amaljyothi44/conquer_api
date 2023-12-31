@@ -422,6 +422,7 @@ def get_next_reminder_question(request):
             serialized_question = {
                 'questionNumber': question_data.questionNumber,
                 'body': question_data.body,
+                'subject': question_data.subject,
                 'answer': question_data.answer,
                 'id': question_data.id,
                 'eli_len' : eli_leng,
@@ -429,23 +430,25 @@ def get_next_reminder_question(request):
             return JsonResponse(serialized_question)
         
 @csrf_exempt
-def update_remainder_repetition(request, quiz_id):
+def update_reminder_repetition(request, quiz_id):
     try:
         if request.method == 'POST':
             remind = Reminder.objects.get(id=quiz_id)
             result = True
+            count_object, created = Countdb.objects.get_or_create(dateAnswer=datetime.now().date())
+            count_object.remcount+=1
+            count_object.save()
             if result :
                 repetition_delay = get_repetition_delay_rem(remind.nextRepetition)
                 next_repetition_date = datetime.now() + timedelta(days=repetition_delay)
                 remind.nextRepetition = repetition_delay
                 remind.date = next_repetition_date.strftime('%Y-%m-%d')
                 remind.save()
-            
-
-        # Replace with your actual response
-        return JsonResponse({'message': 'Success'})
-    except Quiz.DoesNotExist:
-        return JsonResponse({'message': 'Quiz not found'}, status=404)
+                
+                return JsonResponse({'message': 'Success'})
+            else:
+                return JsonResponse({'message': 'some error'})
+        
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({'message': str(e)}, status=500)
@@ -488,3 +491,31 @@ def next_news(request):
     
 def conqure(request):
     return render(request, 'main.html')
+
+
+@csrf_exempt
+def reminder_update(request):
+    try:
+        if request.method == 'POST':
+            
+            body_unicode = request.body.decode('utf-8')
+            body_data = json.loads(body_unicode)
+            print([body_data])
+            qs = len(Reminder.objects.all())
+
+            remainder_ob, create = Reminder.objects.get_or_create(
+                questionNumber= qs + 1,
+                defaults={
+                    'body': body_data.get('body'),
+                    'answer': body_data.get('answer'),
+                    'nextRepetition': 0,
+                    
+                    'subject': body_data.get('subject'),
+                    'date': datetime.now().date(),
+                }
+            )
+            return JsonResponse({'message': 'Success'})
+    
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': str(e)}, status=500)       
