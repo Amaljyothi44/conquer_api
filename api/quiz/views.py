@@ -413,7 +413,7 @@ def get_next_reminder_question(request):
 
         if next_quiz_number is None:
             serialized_question = {
-                'body': "Question Finished",
+                'answer': "Question Finished",
             }
             return JsonResponse(serialized_question)
         else:
