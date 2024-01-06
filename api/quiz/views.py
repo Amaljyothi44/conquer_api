@@ -411,12 +411,15 @@ def get_next_reminder_question(request):
         else:
             next_quiz_number = get_next_question_no(questions_dict)
 
-        if next_quiz_number is None:
+        if next_quiz_number is None :
             serialized_question = {
-                'answer': "Question Finished",
+                'body' : "Question",
+                'answer': "Question \n\n Finished",
+                'eli_len' : 0,
+                'questionNumber':'End',
             }
             return JsonResponse(serialized_question)
-        else:
+        else: 
             question_data = eligible_questions_dict.get(
                 next_quiz_number) or questions_dict.get(next_quiz_number)
             serialized_question = {
