@@ -1,6 +1,6 @@
 from rest_framework import generics, status
-from .models import Quiz, Countdb, News, Reminder
-from .serializers import QuizSerializer, CountSerializer,NewsSerializer, RemindSerializer
+from .models import Quiz, Countdb, News, Reminder, Subquiz
+from .serializers import QuizSerializer, CountSerializer,NewsSerializer, RemindSerializer,SubquizSerializer
 from rest_framework.response import Response
 from django.http import JsonResponse,HttpResponse
 from datetime import datetime, timedelta
@@ -17,7 +17,6 @@ class QuizListCreateView(generics.ListCreateAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
 
-
 class QuizRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
@@ -32,6 +31,26 @@ class QuizRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(serializer.data)
     
+#--sub quiz
+
+class SubquizListCreateView(generics.ListCreateAPIView):
+    queryset = Subquiz.objects.all()
+    serializer_class = SubquizSerializer
+
+class SubquizRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Subquiz.objects.all()
+    serializer_class = SubquizSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+
 
 class NewsList(generics.ListCreateAPIView):
     queryset = News.objects.all()
@@ -161,9 +180,9 @@ def get_next_question(request):
             return JsonResponse(serialized_question)
 
 
-REPETITION_INTERVALS = [0, 3, 5, 7, 10, 12]
+REPETITION_INTERVALS = [0, 3, 5, 7, 10, 12, 15, 18, 20]
 
-REPETITION_INTERVALS_REM = [0, 3, 3, 5, 5, 5, 7, 7, 7, 10, 10, 10, 12]
+REPETITION_INTERVALS_REM = [0, 3, 3, 5, 5, 5, 7, 7, 7, 10]
 
 def get_repetition_delay(last_repetition):
   
@@ -522,3 +541,81 @@ def reminder_update(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({'message': str(e)}, status=500)       
+    
+
+#sub- quiz
+@csrf_exempt
+def get_sub_next_question(request):
+    if request.method == 'GET':
+        all_questions = Subquiz.objects.all()
+    
+        # Use Django's filter to get eligible and sorted questions
+        filtered_quiz_data = all_questions.filter(nextRepetition__lt=1)
+      
+        sorted_quiz_data = filtered_quiz_data.order_by(
+            'date', 'questionNumber')
+       
+        questions_dict = {
+            item.questionNumber: item for item in sorted_quiz_data}
+        
+        # Use Django's filter to get eligible and sorted questions
+        eligible_questions = all_questions.filter(
+            nextRepetition__gt=0,
+            date__lte=datetime.now().date()
+        ).order_by('date', 'questionNumber')
+        
+        eligible_questions_dict = {
+            item.questionNumber: item for item in eligible_questions}
+        eli_leng = len(eligible_questions)
+        if len(eligible_questions) > 0:
+            next_quiz_number = get_next_eligible_question(
+                eligible_questions_dict)
+            if next_quiz_number is None:
+                next_quiz_number = get_next_question_no(questions_dict)
+        else:
+            next_quiz_number = get_next_question_no(questions_dict)
+
+        if next_quiz_number is None:
+            return JsonResponse({'message': 'No eligible questions found'})
+        else:
+            question_data = eligible_questions_dict.get(
+                next_quiz_number) or questions_dict.get(next_quiz_number)
+            serialized_question = {
+                'questionNumber': question_data.questionNumber,
+                'subject': question_data.subject,
+                'question': question_data.question,
+                'options': question_data.options,
+                'correctOption': question_data.correctOption,
+                'link': question_data.link,
+                'id': question_data.id,
+                'eli_len' : eli_leng,
+            }
+            return JsonResponse(serialized_question)
+        
+@csrf_exempt
+def update_sub_repetition(request, quiz_id):
+    try:
+        if request.method == 'POST':
+            quiz = Subquiz.objects.get(id=quiz_id)
+            body_unicode = request.body.decode('utf-8')
+            body_data = json.loads(body_unicode)
+            result = body_data.get('result', None)
+            if result == True:
+                repetition_delay = get_repetition_delay(quiz.nextRepetition)
+                next_repetition_date = datetime.now() + timedelta(days=repetition_delay)
+                quiz.nextRepetition = repetition_delay
+                quiz.date = next_repetition_date.strftime('%Y-%m-%d')
+                quiz.save()
+            else:
+                next_repetition_date = datetime.now() + timedelta(days=3)
+                quiz.nextRepetition = 3
+                quiz.date = next_repetition_date.strftime('%Y-%m-%d')
+                quiz.save()
+
+        # Replace with your actual response
+        return JsonResponse({'message': 'Success'})
+    except Quiz.DoesNotExist:
+        return JsonResponse({'message': 'Quiz not found'}, status=404)
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': str(e)}, status=500)
